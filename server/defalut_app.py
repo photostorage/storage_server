@@ -1,4 +1,5 @@
-from bottle import Bottle, run, route, request
+from bottle import Bottle, run, route, request, static_file
+import os
 import os.path
 app = Bottle()
 
@@ -18,8 +19,8 @@ def test1():
 #一个简单页面，可以用浏览器提交文件
 #@app.route('/upload')
 #def upload():
-#	return '"<html><head></head><body><form action "/upload" method="post" enctype="multipart/form-data"><input type="file" name="photofile" /><input type="submit" value="Upload" /></form></body></html>"'
-			
+#	retusrn '"<html><head></head><body><form action "/upload" method="post" enctype="multipart/form-data"><input type="file" name="photofile" /><input type="submit" value="Upload" /></form></body></html>"'
+#上传文件，本保存到本地		
 @app.route('/upload', method = 'POST')
 def do_upload():
 	upload = request.files.get('photofile')
@@ -28,4 +29,21 @@ def do_upload():
 	upload.save(new_name, overwrite=True)
 	return 'OK'
 
+#获取文件
+@app.route('/getphoto/<name>', method = 'GET')
+def get_photo(name):
+	return static_file(name, root='/home/zm/source/storage_server/server')
+
+#查询某个文件是否存在
+@app.route('/checkphoto/<name>', method = 'GET')
+def check_photo(name):
+	localname = '/home/zm/source/storage_server/server/' + name
+	try:
+		fp = open(localname, 'r')
+	except :
+		return name + 'is not exist'
+	finally:
+		fp.close()
+	return 'is exist'
+		
 run(app, host='localhost', port=8080, debug=True)
