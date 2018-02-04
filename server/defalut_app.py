@@ -38,12 +38,16 @@ def get_photo(name):
 @app.route('/checkphoto/<name>', method = 'GET')
 def check_photo(name):
 	localname = '/home/zm/source/storage_server/server/' + name
+	respose = 'check'
 	try:
 		fp = open(localname, 'r')
+		if fp:
+			fp.close()
 	except :
-		return name + 'is not exist'
-	finally:
-		fp.close()
-	return 'is exist'
+		respose = respose + name + 'is not exist'
+	else:
+		respose = respose + name + 'is exist'
+	finally:	
+		return respose
 		
 run(app, host='localhost', port=8080, debug=True)
